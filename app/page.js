@@ -1,102 +1,151 @@
+"use client";
+
+import { useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+
+const robotServices = [
+  {
+    id: "svc-1",
+    title: "Warehouse Picking Assistant",
+    company: "Maru Robotics",
+    location: "Remote · Global",
+    tags: ["logistics", "picking", "autonomy"],
+    href: "https://example.com/services/warehouse-picking",
+  },
+  {
+    id: "svc-2",
+    title: "Residential Delivery Bot Operator",
+    company: "ParcelPilot",
+    location: "Austin, TX",
+    tags: ["delivery", "teleop", "last‑mile"],
+    href: "https://example.com/services/delivery-operator",
+  },
+  {
+    id: "svc-3",
+    title: "Hospital Courier Robot Fleet",
+    company: "CarePath",
+    location: "Boston, MA",
+    tags: ["healthcare", "fleet", "mapping"],
+    href: "https://example.com/services/hospital-courier",
+  },
+  {
+    id: "svc-4",
+    title: "Autonomous Lawn Care",
+    company: "GreenByte",
+    location: "Orlando, FL",
+    tags: ["outdoor", "navigation", "maintenance"],
+    href: "https://example.com/services/lawn-care",
+  },
+  {
+    id: "svc-5",
+    title: "Security Patrol Rover",
+    company: "Aegis Robotics",
+    location: "Remote · Night Shift",
+    tags: ["security", "vision", "alerts"],
+    href: "https://example.com/services/security-patrol",
+  },
+  {
+    id: "svc-6",
+    title: "Retail Shelf Scanning",
+    company: "ShelfSense",
+    location: "Chicago, IL",
+    tags: ["retail", "inventory", "scanner"],
+    href: "https://example.com/services/retail-scanner",
+  },
+];
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [query, setQuery] = useState("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return robotServices;
+    return robotServices.filter((s) => {
+      const hay = [
+        s.title,
+        s.company,
+        s.location,
+        ...(s.tags || []),
+      ]
+        .join(" ")
+        .toLowerCase();
+      return hay.includes(q);
+    });
+  }, [query]);
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="w-full border-b border-black/10 dark:border-white/10 bg-white/60 dark:bg-black/20 backdrop-blur">
+        <div className="mx-auto max-w-6xl px-6 py-8 flex items-center gap-4">
+          <div className="relative h-16 w-16 shrink-0 rounded-lg overflow-hidden ring-1 ring-black/10 dark:ring-white/10">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              src="/maru1.jpg"
+              alt="Maru the robot assistant"
+              fill
+              sizes="(max-width: 768px) 64px, 64px"
+              className="object-cover"
+              priority
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-bold tracking-tight">MARU – The Robot Assistant</h1>
+            <p className="text-sm text-black/60 dark:text-white/60">Find and book robot-powered services.</p>
+          </div>
         </div>
+      </header>
+
+      <main className="mx-auto max-w-6xl px-6 py-10">
+        <div className="mb-8">
+          <label htmlFor="service-search" className="sr-only">Search services</label>
+          <div className="relative">
+            <input
+              id="service-search"
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by service, tag, company, or location..."
+              className="w-full rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/5 px-5 py-4 pr-12 text-base shadow-sm outline-none ring-0 focus:border-transparent focus:shadow-md transition"
+            />
+            <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-black/40 dark:text-white/40">⌕</span>
+          </div>
+        </div>
+
+        <section aria-label="Service feed" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filtered.map((s) => (
+            <Link
+              key={s.id}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group rounded-2xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <h3 className="text-lg font-semibold leading-tight group-hover:text-blue-600">{s.title}</h3>
+                <span className="text-xs rounded-full bg-black/5 dark:bg-white/10 px-2 py-1">{s.location}</span>
+              </div>
+              <p className="mt-1 text-sm text-black/60 dark:text-white/60">{s.company}</p>
+              {s.tags?.length ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {s.tags.map((t) => (
+                    <span key={t} className="text-xs rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 px-2.5 py-1 border border-blue-200/60 dark:border-blue-400/20">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+              <div className="mt-4 text-sm font-medium text-blue-600 group-hover:underline">View details →</div>
+            </Link>
+          ))}
+        </section>
+
+        {filtered.length === 0 && (
+          <p className="mt-8 text-center text-sm text-black/60 dark:text-white/60">No services match your search.</p>
+        )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      <footer className="mx-auto max-w-6xl px-6 pb-10 text-sm text-black/60 dark:text-white/60">
+        © {new Date().getFullYear()} Maru. All robot services are illustrative.
       </footer>
     </div>
   );
