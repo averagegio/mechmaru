@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
+import { robotServices as servicesData } from "@/lib/services";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -57,11 +58,23 @@ const robotServices = [
 
 export default function Home() {
   const [query, setQuery] = useState("");
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const heroRef = useRef(null);
+
+  const handleHeroPointerMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    const maxTilt = 8; // degrees
+    setTilt({ x: py * maxTilt, y: -px * maxTilt });
+  };
+
+  const resetTilt = () => setTilt({ x: 0, y: 0 });
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return robotServices;
-    return robotServices.filter((s) => {
+    if (!q) return servicesData;
+    return servicesData.filter((s) => {
       const hay = [
         s.title,
         s.company,
@@ -95,7 +108,72 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-10">
+      <section
+        aria-label="Mini hero"
+        ref={heroRef}
+        onMouseMove={handleHeroPointerMove}
+        onMouseLeave={resetTilt}
+        className="relative mx-auto max-w-6xl px-6 pt-10"
+      >
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] shadow-2xl backdrop-blur">
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background:
+              "radial-gradient(800px 400px at -10% -20%, rgba(255,255,255,0.08), transparent 50%), " +
+              "radial-gradient(600px 300px at 110% -10%, rgba(255,255,255,0.07), transparent 50%), " +
+              "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0))",
+          }} />
+
+          <div className="relative grid grid-cols-1 md:grid-cols-2 gap-6 items-center p-6 md:p-10" style={{
+            transform: `perspective(1200px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+            transformStyle: "preserve-3d",
+            transition: "transform 180ms ease-out",
+          }}>
+            <div className="space-y-3" style={{ transform: "translateZ(32px)" }}>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Meet MARU</h2>
+              <p className="text-sm md:text-base text-white/70">
+                A sleek robotics assistant. Explore services and see MARU in motion.
+              </p>
+              <div className="flex gap-3 pt-2">
+                <Link href="#service-feed" className="rounded-xl bg-white text-black px-4 py-2 text-sm font-medium hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/40 transition">
+                  Browse services
+                </Link>
+                <Link href="#" className="rounded-xl border border-white/20 px-4 py-2 text-sm font-medium hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 transition">
+                  Learn more
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4" style={{ transform: "translateZ(24px)" }}>
+              <div className="relative rounded-2xl overflow-hidden ring-1 ring-white/20 shadow-lg">
+                <video
+                  src="/marureel1.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="h-40 md:h-56 w-full object-cover"
+                  poster="/maru1.jpg"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+              </div>
+              <div className="relative rounded-2xl overflow-hidden ring-1 ring-white/20 shadow-lg translate-y-3">
+                <video
+                  src="/marureel2.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="h-40 md:h-56 w-full object-cover"
+                  poster="/maru1.jpg"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <main id="service-feed" className="mx-auto max-w-6xl px-6 py-10">
         <div className="mb-8">
           <label htmlFor="service-search" className="sr-only">Search services</label>
           <div className="relative">
