@@ -58,6 +58,7 @@ const robotServices = [
 
 export default function Home() {
   const [query, setQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const heroRef = useRef(null);
 
@@ -107,11 +108,30 @@ export default function Home() {
               <p className="text-sm text-black/60 dark:text-white/60">Find and book robot-powered services.</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Link href="/pricing" className="text-sm font-medium hover:underline">Pricing</Link>
+            <Link href="/login" className="text-sm font-medium hover:underline">Login</Link>
+            <button
+              type="button"
+              aria-label="Open menu"
+              onClick={() => setMenuOpen((v) => !v)}
+              className="inline-flex items-center justify-center rounded-md border border-white/15 bg-white/10 px-3 py-2 text-sm hover:bg-white/15 md:hidden"
+            >
+              ☰
+            </button>
           </div>
         </div>
       </header>
+
+      {menuOpen && (
+        <div className="md:hidden mx-auto max-w-6xl px-6">
+          <nav className="mt-2 mb-2 rounded-xl border border-white/10 bg-white/10 backdrop-blur p-3 flex flex-col gap-2">
+            <Link onClick={() => setMenuOpen(false)} href="/" className="text-sm hover:underline">Home</Link>
+            <Link onClick={() => setMenuOpen(false)} href="/pricing" className="text-sm hover:underline">Pricing</Link>
+            <Link onClick={() => setMenuOpen(false)} href="/login" className="text-sm hover:underline">Login</Link>
+          </nav>
+        </div>
+      )}
 
       <section
         aria-label="Mini hero"

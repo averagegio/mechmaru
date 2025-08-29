@@ -12,7 +12,10 @@ export default function PricingPage() {
             <Link href="/" className="text-sm font-medium hover:underline">← Back</Link>
             <h1 className="text-2xl font-bold tracking-tight">Pricing</h1>
           </div>
-          <Link href="/" className="text-sm font-medium hover:underline">Home</Link>
+          <div className="flex items-center gap-3">
+            <Link href="/login" className="text-sm font-medium hover:underline">Login</Link>
+            <Link href="/" className="text-sm font-medium hover:underline">Home</Link>
+          </div>
         </div>
       </header>
 
