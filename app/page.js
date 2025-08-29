@@ -91,8 +91,9 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="w-full border-b border-black/10 dark:border-white/10 bg-white/60 dark:bg-black/20 backdrop-blur">
-        <div className="mx-auto max-w-6xl px-6 py-8 flex items-center gap-4">
-          <div className="relative h-16 w-16 shrink-0 rounded-lg overflow-hidden ring-1 ring-black/10 dark:ring-white/10">
+        <div className="mx-auto max-w-6xl px-6 py-8 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="relative h-16 w-16 shrink-0 rounded-lg overflow-hidden ring-1 ring-black/10 dark:ring-white/10">
             <Image
               src="/maru1.jpg"
               alt="Maru the robot assistant"
@@ -101,10 +102,14 @@ export default function Home() {
               className="object-cover"
               priority
             />
+            </div>
+            <div className="flex flex-col">
+              <h1 className="text-2xl font-bold tracking-tight">MARU – The Robot Assistant</h1>
+              <p className="text-sm text-black/60 dark:text-white/60">Find and book robot-powered services.</p>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <h1 className="text-2xl font-bold tracking-tight">MARU – The Robot Assistant</h1>
-            <p className="text-sm text-black/60 dark:text-white/60">Find and book robot-powered services.</p>
+          <div className="flex items-center gap-4">
+            <Link href="/pricing" className="text-sm font-medium hover:underline">Pricing</Link>
           </div>
         </div>
       </header>
@@ -145,7 +150,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-2 gap-4" style={{ transform: "translateZ(24px)" }}>
-              <div className="relative rounded-2xl overflow-hidden ring-1 ring-white/20 shadow-lg">
+              <div className="relative rounded-2xl overflow-hidden ring-1 ring-white/20 shadow-lg transition-transform group hover:-translate-y-1 hover:shadow-2xl">
                 <video
                   src="/marureel1.mp4"
                   autoPlay
@@ -157,7 +162,7 @@ export default function Home() {
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
-              <div className="relative rounded-2xl overflow-hidden ring-1 ring-white/20 shadow-lg translate-y-3">
+              <div className="relative rounded-2xl overflow-hidden ring-1 ring-white/20 shadow-lg translate-y-3 transition-transform group hover:-translate-y-1 hover:shadow-2xl">
                 <video
                   src="/marureel2.mp4"
                   autoPlay
