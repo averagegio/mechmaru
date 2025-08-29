@@ -59,3 +59,60 @@ curl -X POST "https://<your-deployment>/api/admin/seed?token=<token>"
 - `GET /api/services/[id]` → service by id (Redis with static fallback)
 - `GET /api/search?q=term` → search (Redis with static fallback)
 - `POST /api/book` → creates a booking (persists to Redis list)
+
+## Auth API
+
+- Register
+```powershell
+$domain = "https://<your-domain>"
+$body = @{ email = "you@example.com"; password = "strongpass" } | ConvertTo-Json
+Invoke-RestMethod -Method Post "$domain/api/auth/register" -ContentType "application/json" -Body $body
+```
+
+- Login (sets httpOnly cookie; use in browser/fetch or tools that preserve cookies)
+```powershell
+$body = @{ email = "you@example.com"; password = "strongpass" } | ConvertTo-Json
+Invoke-RestMethod -Method Post "$domain/api/auth/login" -ContentType "application/json" -Body $body
+```
+
+- Me
+```powershell
+Invoke-RestMethod "$domain/api/auth/me"
+```
+
+- Logout
+```powershell
+Invoke-RestMethod -Method Post "$domain/api/auth/logout"
+```
+
+curl.exe equivalents:
+```powershell
+curl.exe -X POST -H "content-type: application/json" -d "{\"email\":\"you@example.com\",\"password\":\"strongpass\"}" "https://<your-domain>/api/auth/register"
+```
+
+### Auth: Verification and Password Reset
+
+- Request verification token (returns token; in production, send via email):
+```powershell
+$domain = "https://<your-domain>"
+$body = @{ email = "you@example.com" } | ConvertTo-Json
+Invoke-RestMethod -Method Post "$domain/api/auth/verify/request" -ContentType "application/json" -Body $body
+```
+
+- Confirm verification:
+```powershell
+$body = @{ token = "<token-from-previous-step>" } | ConvertTo-Json
+Invoke-RestMethod -Method Post "$domain/api/auth/verify/confirm" -ContentType "application/json" -Body $body
+```
+
+- Request password reset:
+```powershell
+$body = @{ email = "you@example.com" } | ConvertTo-Json
+Invoke-RestMethod -Method Post "$domain/api/auth/reset/request" -ContentType "application/json" -Body $body
+```
+
+- Confirm password reset:
+```powershell
+$body = @{ token = "<reset-token>"; newPassword = "newStrongPass" } | ConvertTo-Json
+Invoke-RestMethod -Method Post "$domain/api/auth/reset/confirm" -ContentType "application/json" -Body $body
+```
