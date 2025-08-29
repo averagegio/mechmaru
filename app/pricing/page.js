@@ -4,6 +4,25 @@ import Link from "next/link";
 import { plans } from "@/lib/pricing";
 
 export default function PricingPage() {
+  async function handleChoose(planId) {
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ plan: planId }),
+      });
+      const data = await res.json();
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else if (data.ok) {
+        alert(`Activated ${data.plan}. You can now access premium services.`);
+      } else {
+        alert(data.error || "Checkout failed");
+      }
+    } catch (e) {
+      alert("Checkout failed");
+    }
+  }
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="w-full border-b border-black/10 dark:border-white/10 bg-white/60 dark:bg-black/20 backdrop-blur">
@@ -42,7 +61,7 @@ export default function PricingPage() {
                 ))}
               </ul>
               <div className="mt-5 grid grid-cols-2 gap-3">
-                <button className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm hover:bg-white/15 transition">Choose</button>
+                <button onClick={() => handleChoose(p.id)} className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm hover:bg-white/15 transition">Choose</button>
                 <Link href="/" className="rounded-xl border border-blue-400/40 bg-blue-500/20 px-4 py-2 text-sm text-blue-100 hover:bg-blue-500/25 text-center transition">Start Free</Link>
               </div>
             </div>
