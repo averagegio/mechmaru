@@ -2,7 +2,6 @@
 
 import { useMemo, useState, useRef } from "react";
 import { robotServices as servicesData } from "@/lib/services";
-import { plans } from "@/lib/pricing";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -179,28 +178,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section aria-label="Pricing" className="mx-auto max-w-6xl px-6 py-10">
-        <h2 className="text-xl md:text-2xl font-semibold mb-6">Pricing</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {plans.map((p) => (
-            <div key={p.id} className={`rounded-2xl border ${p.recommended ? "border-blue-400/40" : "border-white/10"} bg-white/[0.06] p-6 shadow-sm`}> 
-              <div className="flex items-baseline justify-between">
-                <h3 className="text-lg font-bold">{p.name}</h3>
-                {p.recommended ? <span className="text-xs rounded-full bg-blue-500/20 text-blue-300 px-2 py-0.5">Recommended</span> : null}
-              </div>
-              <div className="mt-2 text-3xl font-extrabold tracking-tight">{p.priceMonthly === 0 ? "Free" : `$${p.priceMonthly}`}<span className="text-sm font-medium text-white/60">/mo</span></div>
-              <ul className="mt-4 space-y-2 text-sm text-white/80">
-                {p.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2"><span>✓</span><span>{f}</span></li>
-                ))}
-              </ul>
-              <button className="mt-5 w-full rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm hover:bg-white/15">Choose {p.name}</button>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <main id="service-feed" className="mx-auto max-w-6xl px-6 pb-10">
+      <main id="service-feed" className="mx-auto max-w-6xl px-6 py-10">
         <div className="mb-8">
           <label htmlFor="service-search" className="sr-only">Search services</label>
           <div className="relative">
