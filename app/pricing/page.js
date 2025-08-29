@@ -11,6 +11,10 @@ export default function PricingPage() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ plan: planId }),
       });
+      if (res.status === 401) {
+        window.location.href = "/login";
+        return;
+      }
       const data = await res.json();
       if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
