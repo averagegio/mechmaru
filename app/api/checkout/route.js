@@ -13,14 +13,8 @@ function getOrigin(request) {
 
 export async function POST(request) {
   const sess = await getSession();
-  if (!sess) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "content-type": "application/json" },
-    });
-  }
-
-  const { plan } = await request.json();
+  const body = await request.json();
+  const { plan, email: bodyEmail } = body || {};
   const selected = getPlanById(plan);
   if (!selected) {
     return new Response(JSON.stringify({ error: "Invalid plan" }), {
@@ -49,7 +43,7 @@ export async function POST(request) {
       const session = await stripe.checkout.sessions.create({
         mode: "subscription",
         line_items: [{ price: priceId, quantity: 1 }],
-        customer_email: sess.email,
+        customer_email: bodyEmail || sess?.email || undefined,
         success_url: `${origin}/pricing?success=1&plan=${selected.id}`,
         cancel_url: `${origin}/pricing?canceled=1`,
         metadata: { plan: selected.id, email: sess.email },
@@ -64,6 +58,7 @@ export async function POST(request) {
   try {
     const redis = getRedis();
     if (!redis) throw new Error("redis-unavailable");
+    if (!sess?.email) throw new Error("login-required");
     await redis.set(`membership:${sess.email}`, selected.id);
     return Response.json({ ok: true, plan: selected.id, activated: true, provider: "direct" });
   } catch {
