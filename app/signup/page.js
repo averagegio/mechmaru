@@ -21,7 +21,17 @@ export default function SignupPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Signup failed");
-      setMessage("Account created. You can sign in now.");
+      // Auto-verified in backend; redirect to dashboard after quick login
+      const loginRes = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      if (loginRes.ok) {
+        window.location.href = "/dashboard";
+        return;
+      }
+      setMessage("Account created. Please sign in.");
     } catch (err) {
       setMessage(String(err.message || err));
     } finally {

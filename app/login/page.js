@@ -21,7 +21,7 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Login failed");
-      setMessage("Logged in. You can close this tab or go back home.");
+      window.location.href = "/dashboard";
     } catch (err) {
       setMessage(String(err.message || err));
     } finally {
@@ -56,8 +56,8 @@ export default function LoginPage() {
             {loading ? "Signing in..." : "Sign in"}
           </button>
           {message ? <div className="text-xs text-white/70">{message}</div> : null}
-          <div className="text-xs text-white/80">
-            Need an account? <Link href="/signup" className="underline">Sign up</Link>
+          <div className="pt-2">
+            <Link href="/signup" className="block w-full text-center rounded-xl border border-white/25 bg-white/10 px-4 py-2 text-sm hover:bg-white/15">Sign up</Link>
           </div>
         </form>
       </main>
