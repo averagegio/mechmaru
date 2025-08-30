@@ -26,7 +26,8 @@ export async function POST(request) {
   const origin = getOrigin(request) || "";
 
   const hasStripe = !!process.env.STRIPE_SECRET_KEY;
-  if (hasStripe && selected.priceMonthly > 0) {
+  const isPaid = selected.priceMonthly > 0;
+  if (hasStripe && isPaid) {
     try {
       const { default: Stripe } = await import("stripe");
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -46,27 +47,38 @@ export async function POST(request) {
         customer_email: bodyEmail || sess?.email || undefined,
         success_url: `${origin}/pricing?success=1&plan=${selected.id}`,
         cancel_url: `${origin}/pricing?canceled=1`,
-        metadata: { plan: selected.id, email: sess.email },
+        metadata: { plan: selected.id, email: bodyEmail || sess?.email || "" },
       });
       return Response.json({ checkoutUrl: session.url, provider: "stripe" });
     } catch (e) {
-      // Fall through to immediate activation if Stripe fails
+      return new Response(JSON.stringify({ error: "Stripe checkout unavailable. Check configuration." }), {
+        status: 400,
+        headers: { "content-type": "application/json" },
+      });
     }
   }
 
-  // Fallback: immediate activation via Redis membership
-  try {
-    const redis = getRedis();
-    if (!redis) throw new Error("redis-unavailable");
-    if (!sess?.email) throw new Error("login-required");
-    await redis.set(`membership:${sess.email}`, selected.id);
-    return Response.json({ ok: true, plan: selected.id, activated: true, provider: "direct" });
-  } catch {
-    return new Response(JSON.stringify({ error: "Activation failed" }), {
-      status: 500,
-      headers: { "content-type": "application/json" },
-    });
+  // Free plan activation requires login
+  if (!isPaid) {
+    try {
+      const redis = getRedis();
+      if (!redis) throw new Error("redis-unavailable");
+      if (!sess?.email) return new Response(JSON.stringify({ error: "Login required" }), { status: 401 });
+      await redis.set(`membership:${sess.email}`, selected.id);
+      return Response.json({ ok: true, plan: selected.id, activated: true, provider: "direct" });
+    } catch {
+      return new Response(JSON.stringify({ error: "Activation failed" }), {
+        status: 500,
+        headers: { "content-type": "application/json" },
+      });
+    }
   }
+
+  // Paid plan but Stripe not configured
+  return new Response(JSON.stringify({ error: "Stripe not configured" }), {
+    status: 400,
+    headers: { "content-type": "application/json" },
+  });
 }
 
 

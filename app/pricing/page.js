@@ -60,9 +60,12 @@ export default function PricingPage() {
                   <li key={f} className="flex items-start gap-2"><span>✓</span><span>{f}</span></li>
                 ))}
               </ul>
-              <div className="mt-5 grid grid-cols-2 gap-3">
-                <button onClick={() => handleChoose(p.id)} className={`${p.id !== "free" ? "bg-blue-600 hover:bg-blue-500" : "bg-white/10 hover:bg-white/15"} rounded-xl border ${p.id !== "free" ? "border-blue-400/40" : "border-white/20"} px-4 py-2 text-sm transition`}>{p.id !== "free" ? "Subscribe" : "Choose"}</button>
-                <Link href="/" className="rounded-xl border border-blue-400/40 bg-blue-500/20 px-4 py-2 text-sm text-blue-100 hover:bg-blue-500/25 text-center transition">Start Free</Link>
+              <div className="mt-5 grid grid-cols-1 gap-3">
+                {p.id === "free" ? (
+                  <button onClick={() => handleChoose(p.id)} className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm hover:bg-white/15 transition">Choose</button>
+                ) : (
+                  <button onClick={() => handleChoose(p.id)} className="rounded-xl border border-blue-400/50 bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-500 transition">Subscribe</button>
+                )}
               </div>
             </div>
           ))}
